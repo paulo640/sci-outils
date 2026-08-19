@@ -4,17 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Outils SCI IS — Investir via une SCI</title>
-<!-- Cloudflare Web Analytics : remplacer YOUR-TOKEN-HERE par le token fourni lors de la création du site sur https://dash.cloudflare.com > Analytics > Web Analytics -->
+<meta name="description" content="Boîte à outils complète pour investisseurs en SCI à l'IS : rentabilité, comparateur de régimes, fiscalité, trésorerie prévisionnelle.">
+<!-- Cloudflare Web Analytics -->
 <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "YOUR-TOKEN-HERE"}'></script>
 <style>
   :root{
     --ink:#1c2b24;
     --paper:#f6f3ec;
+    --paper-dim:#efeadc;
     --line:#d8d2c2;
+    --line-dark:#b8b09a;
     --brass:#8a6a3c;
     --brass-dark:#6b5029;
     --forest:#2f4a3c;
     --forest-light:#3e6350;
+    --forest-pale:#eaf0ec;
     --rust:#a34a32;
     --good:#2f6b4f;
     --bad:#a34a32;
@@ -33,16 +37,17 @@
     line-height:1.5;
     -webkit-font-smoothing:antialiased;
   }
+  ::selection{background:var(--brass);color:#fff;}
 
   /* ---------- Header ---------- */
   header{
     border-bottom:2px solid var(--ink);
-    padding:28px 20px 20px;
+    padding:32px 20px 22px;
     background:
       repeating-linear-gradient(135deg, transparent, transparent 38px, rgba(138,106,60,0.05) 38px, rgba(138,106,60,0.05) 39px),
       var(--paper);
   }
-  .header-inner{max-width:920px;margin:0 auto;}
+  .header-inner{max-width:980px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;}
   .eyebrow{
     font-family:var(--mono);
     font-size:11px;
@@ -69,10 +74,20 @@
     max-width:56ch;
     margin:0;
   }
+  .header-badge{
+    font-family:var(--mono);
+    font-size:10.5px;
+    color:var(--brass-dark);
+    border:1px solid var(--brass);
+    padding:6px 10px;
+    border-radius:2px;
+    white-space:nowrap;
+    letter-spacing:0.04em;
+  }
 
   /* ---------- Tab nav ---------- */
   nav.tabs{
-    max-width:920px;
+    max-width:980px;
     margin:0 auto;
     display:flex;
     border-bottom:1px solid var(--line);
@@ -80,12 +95,14 @@
     position:sticky;
     top:0;
     z-index:10;
+    overflow-x:auto;
   }
   nav.tabs button{
     flex:1;
+    min-width:130px;
     font-family:var(--mono);
-    font-size:12.5px;
-    letter-spacing:0.03em;
+    font-size:12px;
+    letter-spacing:0.02em;
     padding:16px 8px;
     background:none;
     border:none;
@@ -98,8 +115,8 @@
   nav.tabs button .num{
     display:block;
     font-family:var(--serif);
-    font-size:20px;
-    color:var(--line);
+    font-size:19px;
+    color:var(--line-dark);
     margin-bottom:2px;
     font-style:italic;
   }
@@ -110,40 +127,87 @@
   nav.tabs button.active .num{color:var(--brass);}
   nav.tabs button:hover:not(.active){color:var(--ink);}
 
-  main{max-width:920px;margin:0 auto;padding:32px 20px 80px;}
+  main{max-width:980px;margin:0 auto;padding:32px 20px 40px;}
   .panel{display:none;}
   .panel.active{display:block;animation:fadeIn .25s ease;}
   @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
 
+  .panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:6px;flex-wrap:wrap;}
   .panel-title{
     font-family:var(--serif);
-    font-size:22px;
+    font-size:23px;
     color:var(--forest);
     margin:0 0 4px;
   }
   .panel-desc{
     font-size:13.5px;
     color:#7a7263;
-    margin:0 0 28px;
-    max-width:60ch;
+    margin:0 0 26px;
+    max-width:62ch;
   }
+  .btn-reset{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--brass-dark);
+    background:none;
+    border:1px solid var(--brass);
+    padding:7px 12px;
+    border-radius:2px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:background .15s ease;
+  }
+  .btn-reset:hover{background:var(--brass);color:#fff;}
 
   /* ---------- Form grid ---------- */
   .grid{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:18px 24px;
+    gap:16px 24px;
     margin-bottom:8px;
   }
-  @media(max-width:600px){.grid{grid-template-columns:1fr;}}
+  .grid.cols3{grid-template-columns:1fr 1fr 1fr;}
+  @media(max-width:680px){.grid, .grid.cols3{grid-template-columns:1fr;}}
 
   .field{display:flex;flex-direction:column;gap:6px;}
   .field.span2{grid-column:1 / -1;}
   label{
-    font-size:12px;
+    font-size:11.5px;
     font-family:var(--mono);
     color:#6b6455;
     letter-spacing:0.01em;
+    display:flex;
+    align-items:center;
+    gap:5px;
+  }
+  .tooltip{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:14px;height:14px;
+    border-radius:50%;
+    border:1px solid #b8b09a;
+    color:#9a927f;
+    font-size:9.5px;
+    cursor:help;
+    flex-shrink:0;
+    position:relative;
+  }
+  .tooltip:hover::after{
+    content:attr(data-tip);
+    position:absolute;
+    bottom:130%;
+    left:0;
+    width:220px;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:var(--sans);
+    font-size:11px;
+    line-height:1.4;
+    padding:8px 10px;
+    border-radius:3px;
+    z-index:20;
+    box-shadow:0 4px 12px rgba(0,0,0,0.2);
   }
   .input-wrap{
     position:relative;
@@ -158,7 +222,7 @@
     border:none;
     background:none;
     font-family:var(--serif);
-    font-size:19px;
+    font-size:18px;
     color:var(--ink);
     padding:6px 2px;
     outline:none;
@@ -167,7 +231,7 @@
   select{font-family:var(--sans);font-size:14px;cursor:pointer;}
   .unit{
     font-family:var(--mono);
-    font-size:12px;
+    font-size:11.5px;
     color:#9a927f;
     white-space:nowrap;
     padding-left:6px;
@@ -177,9 +241,9 @@
     display:flex;
     align-items:center;
     gap:10px;
-    margin:32px 0 18px;
+    margin:30px 0 16px;
     font-family:var(--mono);
-    font-size:11px;
+    font-size:10.5px;
     letter-spacing:0.1em;
     text-transform:uppercase;
     color:var(--brass-dark);
@@ -189,6 +253,10 @@
     flex:1;
     height:1px;
     background:var(--line);
+  }
+  .section-divider .count{
+    color:#b0a890;
+    font-weight:normal;
   }
 
   /* ---------- Results ---------- */
@@ -222,18 +290,21 @@
     gap:12px;
   }
   .stat-row:last-child{border-bottom:none;}
+  .stat-row.sub .stat-label{padding-left:14px;color:#8a8272;font-size:12.5px;}
+  .stat-row.sub .stat-value{font-size:15px;color:#6b6455;}
+  .stat-row.total{border-top:2px solid var(--ink);border-bottom:none;padding-top:14px;margin-top:4px;}
   .stat-label{font-size:13.5px;color:#5a5147;}
   .stat-value{
     font-family:var(--serif);
-    font-size:20px;
+    font-size:19px;
     font-weight:600;
     color:var(--ink);
     white-space:nowrap;
   }
-  .stat-value.big{font-size:28px;color:var(--forest);}
+  .stat-value.big{font-size:27px;color:var(--forest);}
   .stat-value.good{color:var(--good);}
   .stat-value.bad{color:var(--bad);}
-  .stat-note{font-size:11.5px;color:#9a927f;font-family:var(--mono);}
+  .stat-note{font-size:11px;color:#9a927f;font-family:var(--mono);}
 
   .compare-grid{
     display:grid;
@@ -245,7 +316,7 @@
   }
   @media(max-width:640px){.compare-grid{grid-template-columns:1fr;}}
   .compare-col{background:var(--card);padding:20px 16px;}
-  .compare-col.winner{background:#f0f5f1;}
+  .compare-col.winner{background:var(--forest-pale);}
   .compare-col h3{
     font-family:var(--serif);
     font-size:16px;
@@ -254,6 +325,7 @@
     display:flex;
     align-items:center;
     gap:6px;
+    flex-wrap:wrap;
   }
   .compare-col.winner h3::after{
     content:"MEILLEUR";
@@ -271,19 +343,20 @@
     font-size:12.5px;
     padding:6px 0;
     border-bottom:1px dotted var(--line);
+    gap:8px;
   }
   .compare-line:last-child{border-bottom:none;}
-  .compare-line b{font-family:var(--mono);font-weight:600;}
+  .compare-line b{font-family:var(--mono);font-weight:600;white-space:nowrap;}
 
-  .bar-chart{margin-top:24px;}
-  .bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
-  .bar-label{font-size:11.5px;font-family:var(--mono);width:110px;flex-shrink:0;color:#6b6455;}
-  .bar-track{flex:1;background:#eae5d8;height:22px;border-radius:1px;overflow:hidden;position:relative;}
+  .bar-chart{margin-top:8px;}
+  .bar-row{display:flex;align-items:center;gap:12px;margin-bottom:9px;}
+  .bar-label{font-size:11.5px;font-family:var(--mono);width:100px;flex-shrink:0;color:#6b6455;}
+  .bar-track{flex:1;background:#eae5d8;height:20px;border-radius:1px;overflow:hidden;position:relative;}
   .bar-fill{height:100%;background:linear-gradient(90deg,var(--forest-light),var(--forest));transition:width .5s ease;}
-  .bar-value{font-family:var(--mono);font-size:11.5px;width:80px;text-align:right;flex-shrink:0;}
+  .bar-value{font-family:var(--mono);font-size:11.5px;width:78px;text-align:right;flex-shrink:0;}
 
   .info-box{
-    background:#f0ece0;
+    background:var(--paper-dim);
     border-left:3px solid var(--brass);
     padding:12px 16px;
     font-size:12.5px;
@@ -291,19 +364,124 @@
     margin-top:20px;
     line-height:1.55;
   }
+  .info-box.warn{border-left-color:var(--rust);}
 
-  footer{
-    max-width:920px;
-    margin:0 auto;
-    padding:24px 20px 40px;
-    border-top:1px solid var(--line);
+  /* ---------- Table (trésorerie) ---------- */
+  .table-wrap{overflow-x:auto;margin-top:20px;border:1px solid var(--line);}
+  table.cashtable{width:100%;border-collapse:collapse;font-size:12px;font-family:var(--mono);white-space:nowrap;}
+  table.cashtable th{
+    background:var(--forest);
+    color:var(--paper);
+    text-align:right;
+    padding:9px 12px;
+    font-weight:500;
+    letter-spacing:0.02em;
+    position:sticky;
+    top:0;
+  }
+  table.cashtable th:first-child, table.cashtable td:first-child{text-align:left;position:sticky;left:0;background:inherit;}
+  table.cashtable td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--line);background:var(--card);}
+  table.cashtable tr:nth-child(even) td{background:var(--paper-dim);}
+  table.cashtable td.neg{color:var(--bad);}
+  table.cashtable td.pos{color:var(--good);}
+  table.cashtable tr.milestone td{font-weight:600;border-top:1.5px solid var(--brass);}
+
+  /* ---------- Summary export card ---------- */
+  .export-bar{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+    flex-wrap:wrap;
+  }
+  .btn-export{
     font-family:var(--mono);
-    font-size:11px;
-    color:#9a927f;
+    font-size:11.5px;
+    color:var(--paper);
+    background:var(--forest);
+    border:none;
+    padding:11px 18px;
+    border-radius:2px;
+    cursor:pointer;
+    letter-spacing:0.03em;
+    transition:background .15s ease;
+  }
+  .btn-export:hover{background:var(--forest-light);}
+  .btn-export.secondary{
+    background:none;
+    color:var(--forest);
+    border:1px solid var(--forest);
+  }
+  .btn-export.secondary:hover{background:var(--forest-pale);}
+
+  /* ---------- Footer / author ---------- */
+  footer{
+    border-top:2px solid var(--ink);
+    background:var(--forest);
+    color:var(--paper);
+  }
+  .footer-inner{
+    max-width:980px;
+    margin:0 auto;
+    padding:36px 20px 28px;
+  }
+  .footer-author{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:24px;
+    flex-wrap:wrap;
+    padding-bottom:24px;
+    border-bottom:1px solid rgba(246,243,236,0.18);
+    margin-bottom:20px;
+  }
+  .footer-author-text .eyebrow2{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#c9b98c;
+    margin-bottom:6px;
+  }
+  .footer-author-text h2{
+    font-family:var(--serif);
+    font-size:20px;
+    margin:0 0 6px;
+    color:var(--paper);
+    font-weight:600;
+  }
+  .footer-author-text p{
+    font-size:13px;
+    color:#c8d3cc;
+    margin:0;
+    max-width:48ch;
+  }
+  .btn-author{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--forest);
+    background:var(--paper);
+    border:none;
+    padding:13px 22px;
+    border-radius:2px;
+    text-decoration:none;
+    letter-spacing:0.03em;
+    white-space:nowrap;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    transition:background .15s ease;
+  }
+  .btn-author:hover{background:#fff;}
+  .btn-author::after{content:"→";}
+
+  .footer-meta{
     display:flex;
     justify-content:space-between;
     flex-wrap:wrap;
     gap:8px;
+    font-family:var(--mono);
+    font-size:10.5px;
+    color:#8ba095;
   }
 </style>
 </head>
@@ -311,9 +489,12 @@
 
 <header>
   <div class="header-inner">
-    <div class="eyebrow">Investir via une SCI IS — outils du livre</div>
-    <h1>Boîte à outils SCI</h1>
-    <p class="subhead">Trois calculateurs pour chiffrer votre projet : rentabilité, comparaison de régimes, fiscalité IS. Les mêmes formules que celles utilisées dans le livre.</p>
+    <div>
+      <div class="eyebrow">Investir via une SCI IS — outils du livre</div>
+      <h1>Boîte à outils SCI</h1>
+      <p class="subhead">Quatre calculateurs pour chiffrer précisément votre projet : rentabilité tous frais inclus, comparaison de régimes, fiscalité IS, et trésorerie prévisionnelle année par année.</p>
+    </div>
+    <div class="header-badge">v2 · frais de gestion inclus</div>
   </div>
 </header>
 
@@ -321,14 +502,20 @@
   <button class="active" data-panel="p1"><span class="num">I.</span>Rentabilité</button>
   <button data-panel="p2"><span class="num">II.</span>Comparateur</button>
   <button data-panel="p3"><span class="num">III.</span>Fiscalité IS</button>
+  <button data-panel="p4"><span class="num">IV.</span>Trésorerie</button>
 </nav>
 
 <main>
 
   <!-- ============ PANEL 1 : RENTABILITE ============ -->
   <section class="panel active" id="p1">
-    <h2 class="panel-title">Simulateur de rentabilité</h2>
-    <p class="panel-desc">Cash-flow mensuel, rendement brut/net et taux de rentabilité interne (TRI) sur la durée de détention.</p>
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Simulateur de rentabilité</h2>
+        <p class="panel-desc">Cash-flow mensuel réel, rendement net et TRI — en intégrant tous les frais de gestion d'une SCI, pas seulement les charges locatives.</p>
+      </div>
+      <button class="btn-reset" onclick="resetPanel('r')">↺ Valeurs par défaut</button>
+    </div>
 
     <div class="section-divider">Acquisition</div>
     <div class="grid">
@@ -360,38 +547,88 @@
         <label for="r_taux">Taux d'intérêt</label>
         <div class="input-wrap"><input type="number" id="r_taux" value="3.2" step="0.05"><span class="unit">%</span></div>
       </div>
+      <div class="field">
+        <label for="r_assurance">Assurance emprunteur</label>
+        <div class="input-wrap"><input type="number" id="r_assurance" value="0.25" step="0.05"><span class="unit">%/an</span></div>
+      </div>
+      <div class="field">
+        <label for="r_fraisdossier">Frais de dossier bancaire</label>
+        <div class="input-wrap"><input type="number" id="r_fraisdossier" value="1000" step="50"><span class="unit">€</span></div>
+      </div>
     </div>
 
-    <div class="section-divider">Exploitation</div>
+    <div class="section-divider">Revenus locatifs</div>
     <div class="grid">
       <div class="field">
         <label for="r_loyer">Loyer mensuel (hors charges)</label>
         <div class="input-wrap"><input type="number" id="r_loyer" value="850" step="10"><span class="unit">€/mois</span></div>
       </div>
       <div class="field">
-        <label for="r_charges">Charges non récupérables</label>
-        <div class="input-wrap"><input type="number" id="r_charges" value="120" step="10"><span class="unit">€/mois</span></div>
+        <label for="r_vacance">Vacance locative estimée</label>
+        <div class="input-wrap"><input type="number" id="r_vacance" value="5" step="1"><span class="unit">%</span></div>
       </div>
+      <div class="field">
+        <label for="r_impayes">Provision impayés / contentieux</label>
+        <div class="input-wrap"><input type="number" id="r_impayes" value="1" step="0.5"><span class="unit">% des loyers</span></div>
+      </div>
+    </div>
+
+    <div class="section-divider">Frais de gestion et d'exploitation <span class="count">— tous les postes réels d'une SCI</span></div>
+    <div class="grid cols3">
       <div class="field">
         <label for="r_taxe">Taxe foncière</label>
         <div class="input-wrap"><input type="number" id="r_taxe" value="1100" step="50"><span class="unit">€/an</span></div>
       </div>
       <div class="field">
-        <label for="r_vacance">Vacance locative estimée</label>
-        <div class="input-wrap"><input type="number" id="r_vacance" value="5" step="1"><span class="unit">%</span></div>
+        <label for="r_copro">Charges de copropriété non récup.</label>
+        <div class="input-wrap"><input type="number" id="r_copro" value="600" step="50"><span class="unit">€/an</span></div>
+      </div>
+      <div class="field">
+        <label for="r_pno">Assurance PNO
+          <span class="tooltip" data-tip="Propriétaire Non Occupant : obligatoire en copropriété, recommandée en monopropriété">?</span>
+        </label>
+        <div class="input-wrap"><input type="number" id="r_pno" value="180" step="10"><span class="unit">€/an</span></div>
       </div>
       <div class="field">
         <label for="r_gestion">Frais de gestion locative</label>
-        <div class="input-wrap"><input type="number" id="r_gestion" value="0" step="1"><span class="unit">%</span></div>
+        <div class="input-wrap"><input type="number" id="r_gestion" value="0" step="1"><span class="unit">% des loyers</span></div>
       </div>
       <div class="field">
-        <label for="r_horizon">Horizon de revente</label>
-        <div class="input-wrap"><input type="number" id="r_horizon" value="15" step="1"><span class="unit">ans</span></div>
+        <label for="r_compta">Honoraires comptable
+          <span class="tooltip" data-tip="Cabinet en ligne type Dougs : ~35€/mois pour une SCI simple">?</span>
+        </label>
+        <div class="input-wrap"><input type="number" id="r_compta" value="420" step="10"><span class="unit">€/an</span></div>
+      </div>
+      <div class="field">
+        <label for="r_banque">Frais de tenue de compte pro</label>
+        <div class="input-wrap"><input type="number" id="r_banque" value="180" step="10"><span class="unit">€/an</span></div>
+      </div>
+      <div class="field">
+        <label for="r_cfe">CFE
+          <span class="tooltip" data-tip="Cotisation Foncière des Entreprises, due par la SCI même sans activité commerciale dans la majorité des cas">?</span>
+        </label>
+        <div class="input-wrap"><input type="number" id="r_cfe" value="220" step="10"><span class="unit">€/an</span></div>
+      </div>
+      <div class="field">
+        <label for="r_greffe">Formalités greffe / juridique
+          <span class="tooltip" data-tip="Dépôt des comptes annuels, AG, éventuelles modifications statutaires">?</span>
+        </label>
+        <div class="input-wrap"><input type="number" id="r_greffe" value="120" step="10"><span class="unit">€/an</span></div>
+      </div>
+      <div class="field">
+        <label for="r_travauxprov">Provision gros entretien
+          <span class="tooltip" data-tip="Anticiper toiture, chaudière, ravalement — recommandé même hors copropriété">?</span>
+        </label>
+        <div class="input-wrap"><input type="number" id="r_travauxprov" value="1" step="0.25"><span class="unit">% valeur bien/an</span></div>
       </div>
     </div>
 
     <div class="section-divider">Revente</div>
     <div class="grid">
+      <div class="field">
+        <label for="r_horizon">Horizon de revente</label>
+        <div class="input-wrap"><input type="number" id="r_horizon" value="15" step="1"><span class="unit">ans</span></div>
+      </div>
       <div class="field">
         <label for="r_plusvalue">Appréciation annuelle du bien</label>
         <div class="input-wrap"><input type="number" id="r_plusvalue" value="1.5" step="0.1"><span class="unit">%/an</span></div>
@@ -403,14 +640,21 @@
     </div>
 
     <div class="results" id="r_results"></div>
-
-    <div class="info-box">Le TRI est calculé par la méthode de Newton-Raphson sur les flux annuels (apport initial négatif, cash-flows annuels, produit net de revente en année finale). Simulation indicative — hors IS et hors amortissement fiscal, voir l'onglet <em>Fiscalité IS</em> pour l'impact impôt.</div>
+    <div class="info-box">Le TRI est calculé par la méthode de Newton-Raphson sur les flux annuels nets de tous les frais de gestion listés ci-dessus (apport initial négatif, cash-flows annuels après charges, produit net de revente en année finale). Simulation indicative — hors impact de l'IS, voir l'onglet <em>Fiscalité IS</em> puis <em>Trésorerie</em> pour la vision consolidée impôt inclus.</div>
+    <div class="export-bar">
+      <button class="btn-export" onclick="exportSummary('r')">↓ Exporter le résumé (.txt)</button>
+    </div>
   </section>
 
   <!-- ============ PANEL 2 : COMPARATEUR ============ -->
   <section class="panel" id="p2">
-    <h2 class="panel-title">Comparateur de régimes</h2>
-    <p class="panel-desc">SCI à l'IS vs détention en nom propre (foncier réel) vs SCPI, à effort d'investissement comparable sur l'horizon choisi.</p>
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Comparateur de régimes</h2>
+        <p class="panel-desc">SCI à l'IS vs détention en nom propre (foncier réel) vs SCPI, à effort d'investissement comparable, frais de structure inclus.</p>
+      </div>
+      <button class="btn-reset" onclick="resetPanel('c')">↺ Valeurs par défaut</button>
+    </div>
 
     <div class="section-divider">Paramètres communs</div>
     <div class="grid">
@@ -423,8 +667,8 @@
         <div class="input-wrap"><input type="number" id="c_loyer" value="5.5" step="0.1"><span class="unit">%/an</span></div>
       </div>
       <div class="field">
-        <label for="c_charges">Charges (hors intérêts/impôt)</label>
-        <div class="input-wrap"><input type="number" id="c_charges" value="20" step="1"><span class="unit">% des loyers</span></div>
+        <label for="c_charges">Charges d'exploitation (hors structure)</label>
+        <div class="input-wrap"><input type="number" id="c_charges" value="18" step="1"><span class="unit">% des loyers</span></div>
       </div>
       <div class="field">
         <label for="c_tmi">TMI du foyer fiscal</label>
@@ -447,15 +691,36 @@
       </div>
     </div>
 
-    <div class="results" id="c_results"></div>
+    <div class="section-divider">Frais de structure spécifiques</div>
+    <div class="grid">
+      <div class="field">
+        <label for="c_fraisSCI">Frais annuels SCI (compta + greffe + CFE + banque)
+          <span class="tooltip" data-tip="Coût de structure propre à la SCI, absent en détention directe ou SCPI">?</span>
+        </label>
+        <div class="input-wrap"><input type="number" id="c_fraisSCI" value="940" step="10"><span class="unit">€/an</span></div>
+      </div>
+      <div class="field">
+        <label for="c_fraisSCPI">Frais de souscription SCPI</label>
+        <div class="input-wrap"><input type="number" id="c_fraisSCPI" value="9" step="0.5"><span class="unit">% du montant</span></div>
+      </div>
+    </div>
 
-    <div class="info-box">Comparaison simplifiée à but pédagogique : la SCI IS bénéficie de l'amortissement comptable (charge déductible non décaissée) qui réduit fortement l'IS les premières années ; la détention directe est imposée aux prélèvements sociaux + TMI sur le revenu foncier réel ; la SCPI est imposée comme la détention directe mais sans effet de levier ni gestion.</div>
+    <div class="results" id="c_results"></div>
+    <div class="info-box">Comparaison à but pédagogique. La SCI IS bénéficie de l'amortissement comptable (charge déductible non décaissée) qui réduit fortement l'IS les premières années, mais supporte des frais de structure propres (comptabilité, greffe, CFE). La détention directe est imposée aux prélèvements sociaux + TMI sur le revenu foncier réel, sans amortissement déductible. La SCPI mutualise la gestion (frais d'entrée déduits une fois) mais sans effet de levier bancaire ni maîtrise directe du bien.</div>
+    <div class="export-bar">
+      <button class="btn-export" onclick="exportSummary('c')">↓ Exporter le résumé (.txt)</button>
+    </div>
   </section>
 
   <!-- ============ PANEL 3 : FISCALITE IS ============ -->
   <section class="panel" id="p3">
-    <h2 class="panel-title">Calculateur fiscalité IS</h2>
-    <p class="panel-desc">Impôt sur les sociétés dû, effet de l'amortissement comptable, et nombre d'années à IS quasi nul.</p>
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Calculateur fiscalité IS</h2>
+        <p class="panel-desc">Impôt sur les sociétés dû, effet de l'amortissement comptable, et évolution de la pression fiscale dans le temps.</p>
+      </div>
+      <button class="btn-reset" onclick="resetPanel('f')">↺ Valeurs par défaut</button>
+    </div>
 
     <div class="section-divider">Bien & amortissement</div>
     <div class="grid">
@@ -484,8 +749,10 @@
         <div class="input-wrap"><input type="number" id="f_loyers" value="14400" step="100"><span class="unit">€/an</span></div>
       </div>
       <div class="field">
-        <label for="f_charges">Charges déductibles (hors amort. et intérêts)</label>
-        <div class="input-wrap"><input type="number" id="f_charges" value="2500" step="100"><span class="unit">€/an</span></div>
+        <label for="f_charges">Charges déductibles (hors amort. et intérêts)
+          <span class="tooltip" data-tip="Taxe foncière, copro, PNO, comptable, CFE, banque, greffe, gestion locative...">?</span>
+        </label>
+        <div class="input-wrap"><input type="number" id="f_charges" value="2700" step="100"><span class="unit">€/an</span></div>
       </div>
       <div class="field">
         <label for="f_interets">Intérêts d'emprunt (année 1)</label>
@@ -495,16 +762,101 @@
 
     <div class="results" id="f_results"></div>
 
+    <div class="section-divider">IS dû dans le temps</div>
     <div class="bar-chart" id="f_barchart"></div>
 
     <div class="info-box">Barème IS 2026 : 15% jusqu'à 42 500 € de bénéfice (sous conditions PME), 25% au-delà. L'amortissement est une charge comptable non décaissée : il réduit le résultat fiscal sans sortir de trésorerie, ce qui explique l'IS quasi nul les premières années malgré un cash-flow positif.</div>
+    <div class="export-bar">
+      <button class="btn-export" onclick="exportSummary('f')">↓ Exporter le résumé (.txt)</button>
+    </div>
+  </section>
+
+  <!-- ============ PANEL 4 : TRESORERIE ============ -->
+  <section class="panel" id="p4">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Trésorerie prévisionnelle</h2>
+        <p class="panel-desc">Vision consolidée année par année : loyers, charges, mensualités, IS et trésorerie disponible pour distribution ou réinvestissement.</p>
+      </div>
+      <button class="btn-reset" onclick="resetPanel('t')">↺ Valeurs par défaut</button>
+    </div>
+
+    <div class="section-divider">Paramètres</div>
+    <div class="grid cols3">
+      <div class="field">
+        <label for="t_emprunt">Montant emprunté</label>
+        <div class="input-wrap"><input type="number" id="t_emprunt" value="180000" step="1000"><span class="unit">€</span></div>
+      </div>
+      <div class="field">
+        <label for="t_taux">Taux du prêt</label>
+        <div class="input-wrap"><input type="number" id="t_taux" value="3.2" step="0.05"><span class="unit">%</span></div>
+      </div>
+      <div class="field">
+        <label for="t_duree">Durée du prêt</label>
+        <div class="input-wrap"><input type="number" id="t_duree" value="25" step="1"><span class="unit">ans</span></div>
+      </div>
+      <div class="field">
+        <label for="t_loyers">Loyers annuels (année 1)</label>
+        <div class="input-wrap"><input type="number" id="t_loyers" value="14400" step="100"><span class="unit">€/an</span></div>
+      </div>
+      <div class="field">
+        <label for="t_indexation">Indexation annuelle des loyers</label>
+        <div class="input-wrap"><input type="number" id="t_indexation" value="1.5" step="0.1"><span class="unit">%/an</span></div>
+      </div>
+      <div class="field">
+        <label for="t_charges">Charges de gestion totales (année 1)
+          <span class="tooltip" data-tip="Taxe foncière + copro + PNO + comptable + CFE + banque + greffe + provision travaux">?</span>
+        </label>
+        <div class="input-wrap"><input type="number" id="t_charges" value="2700" step="100"><span class="unit">€/an</span></div>
+      </div>
+      <div class="field">
+        <label for="t_chargesindex">Indexation annuelle des charges</label>
+        <div class="input-wrap"><input type="number" id="t_chargesindex" value="2" step="0.1"><span class="unit">%/an</span></div>
+      </div>
+      <div class="field">
+        <label for="t_valeuramort">Valeur amortissable</label>
+        <div class="input-wrap"><input type="number" id="t_valeuramort" value="180000" step="1000"><span class="unit">€</span></div>
+      </div>
+      <div class="field">
+        <label for="t_dureeamort">Durée d'amortissement</label>
+        <div class="input-wrap"><input type="number" id="t_dureeamort" value="30" step="1"><span class="unit">ans</span></div>
+      </div>
+      <div class="field">
+        <label for="t_horizon">Nombre d'années à afficher</label>
+        <div class="input-wrap"><input type="number" id="t_horizon" value="15" step="1"><span class="unit">ans</span></div>
+      </div>
+    </div>
+
+    <div class="results" id="t_summary"></div>
+
+    <div class="table-wrap">
+      <table class="cashtable" id="t_table"></table>
+    </div>
+
+    <div class="info-box warn">Trésorerie disponible = loyers − charges de gestion − mensualité de prêt (capital + intérêts) − IS dû. Cette trésorerie peut être distribuée en dividendes (fiscalité personnelle à ajouter : flat tax 30% ou barème + PS) ou conservée en compte courant d'associé / réinvestie dans le prochain bien. Simulation indicative, hors CFE variable, hors travaux exceptionnels non provisionnés.</div>
+    <div class="export-bar">
+      <button class="btn-export" onclick="exportSummary('t')">↓ Exporter le résumé (.txt)</button>
+      <button class="btn-export secondary" onclick="exportTableCSV()">↓ Exporter le tableau (.csv)</button>
+    </div>
   </section>
 
 </main>
 
 <footer>
-  <span>Outils du livre « Investir via une SCI IS »</span>
-  <span>Simulation indicative — ne constitue pas un conseil fiscal ou financier personnalisé</span>
+  <div class="footer-inner">
+    <div class="footer-author">
+      <div class="footer-author-text">
+        <div class="eyebrow2">Du même auteur</div>
+        <h2>Découvrez mes autres livres</h2>
+        <p>Guides pratiques sur l'investissement, la fiscalité, le voyage et le développement personnel — disponibles sur Amazon.</p>
+      </div>
+      <a class="btn-author" href="https://www.amazon.fr/stores/author/B0GYDRHV8Y" target="_blank" rel="noopener">Voir tous mes livres</a>
+    </div>
+    <div class="footer-meta">
+      <span>Outils du livre « Investir via une SCI IS »</span>
+      <span>Simulation indicative — ne constitue pas un conseil fiscal ou financier personnalisé</span>
+    </div>
+  </div>
 </footer>
 
 <script>
@@ -521,7 +873,55 @@ document.querySelectorAll('nav.tabs button').forEach(btn=>{
 const fmt = (n, dec=0) => n.toLocaleString('fr-FR', {minimumFractionDigits:dec, maximumFractionDigits:dec});
 const fmtEur = (n, dec=0) => fmt(n,dec) + ' €';
 
-// ================= PANEL 1 : RENTABILITE =================
+// ---------- Default values registry (for reset buttons) ----------
+const DEFAULTS = {
+  r_prix:200000, r_frais:8, r_travaux:0, r_apport:20000, r_duree:25, r_taux:3.2,
+  r_assurance:0.25, r_fraisdossier:1000, r_loyer:850, r_vacance:5, r_impayes:1,
+  r_taxe:1100, r_copro:600, r_pno:180, r_gestion:0, r_compta:420, r_banque:180,
+  r_cfe:220, r_greffe:120, r_travauxprov:1, r_horizon:15, r_plusvalue:1.5, r_fraisvente:5,
+  c_montant:200000, c_loyer:5.5, c_charges:18, c_tmi:30, c_horizon:15, c_appreciation:1.5,
+  c_fraisSCI:940, c_fraisSCPI:9,
+  f_valeur:180000, f_dureeamort:30, f_mobilier:0, f_dureemobilier:7, f_loyers:14400, f_charges:2700, f_interets:5800,
+  t_emprunt:180000, t_taux:3.2, t_duree:25, t_loyers:14400, t_indexation:1.5,
+  t_charges:2700, t_chargesindex:2, t_valeuramort:180000, t_dureeamort:30, t_horizon:15
+};
+
+function resetPanel(prefix){
+  Object.keys(DEFAULTS).filter(k=>k.startsWith(prefix+'_')).forEach(k=>{
+    const el = document.getElementById(k);
+    if(el) el.value = DEFAULTS[k];
+  });
+  computeAll();
+}
+
+// ================= LOAN HELPERS =================
+function loanAnnuity(principal, annualRate, years){
+  const r = annualRate/100/12;
+  const n = years*12;
+  if(r===0) return principal/n;
+  return principal * r / (1 - Math.pow(1+r,-n));
+}
+function remainingBalance(principal, annualRate, years, monthsElapsed){
+  const r = annualRate/100/12;
+  const n = years*12;
+  const M = loanAnnuity(principal, annualRate, years);
+  if(r===0) return principal - M*monthsElapsed;
+  return principal*Math.pow(1+r,monthsElapsed) - M*(Math.pow(1+r,monthsElapsed)-1)/r;
+}
+function interestPaidInYear(principal, annualRate, years, yearIndex){
+  // yearIndex 1-based
+  const startMonth = (yearIndex-1)*12;
+  const endMonth = Math.min(yearIndex*12, years*12);
+  if(startMonth >= years*12) return {interest:0, principalPaid:0};
+  const balStart = remainingBalance(principal, annualRate, years, startMonth);
+  const balEnd = remainingBalance(principal, annualRate, years, endMonth);
+  const M = loanAnnuity(principal, annualRate, years);
+  const monthsThisYear = endMonth - startMonth;
+  const totalPaid = M * monthsThisYear;
+  const principalPaid = balStart - balEnd;
+  const interest = totalPaid - principalPaid;
+  return {interest, principalPaid, annuite: totalPaid};
+}
 function irrNewtonRaphson(cashflows, guess=0.08){
   let rate = guess;
   for(let iter=0; iter<100; iter++){
@@ -538,22 +938,12 @@ function irrNewtonRaphson(cashflows, guess=0.08){
   }
   return rate;
 }
-
-function loanAnnuity(principal, annualRate, years){
-  const r = annualRate/100/12;
-  const n = years*12;
-  if(r===0) return principal/n;
-  return principal * r / (1 - Math.pow(1+r,-n));
+function isFor(resultatFiscal){
+  const rf = Math.max(resultatFiscal, 0);
+  return rf <= 42500 ? rf*0.15 : 42500*0.15 + (rf-42500)*0.25;
 }
 
-function remainingBalance(principal, annualRate, years, monthsElapsed){
-  const r = annualRate/100/12;
-  const n = years*12;
-  const M = loanAnnuity(principal, annualRate, years);
-  if(r===0) return principal - M*monthsElapsed;
-  return principal*Math.pow(1+r,monthsElapsed) - M*(Math.pow(1+r,monthsElapsed)-1)/r;
-}
-
+// ================= PANEL 1 : RENTABILITE =================
 function computeRentabilite(){
   const prix = +document.getElementById('r_prix').value;
   const fraisPct = +document.getElementById('r_frais').value;
@@ -561,80 +951,73 @@ function computeRentabilite(){
   const apport = +document.getElementById('r_apport').value;
   const duree = +document.getElementById('r_duree').value;
   const taux = +document.getElementById('r_taux').value;
+  const assurancePct = +document.getElementById('r_assurance').value;
+  const fraisDossier = +document.getElementById('r_fraisdossier').value;
   const loyerM = +document.getElementById('r_loyer').value;
-  const chargesM = +document.getElementById('r_charges').value;
-  const taxeAn = +document.getElementById('r_taxe').value;
   const vacancePct = +document.getElementById('r_vacance').value;
+  const impayesPct = +document.getElementById('r_impayes').value;
+  const taxeAn = +document.getElementById('r_taxe').value;
+  const coproAn = +document.getElementById('r_copro').value;
+  const pnoAn = +document.getElementById('r_pno').value;
   const gestionPct = +document.getElementById('r_gestion').value;
+  const comptaAn = +document.getElementById('r_compta').value;
+  const banqueAn = +document.getElementById('r_banque').value;
+  const cfeAn = +document.getElementById('r_cfe').value;
+  const greffeAn = +document.getElementById('r_greffe').value;
+  const travauxProvPct = +document.getElementById('r_travauxprov').value;
   const horizon = +document.getElementById('r_horizon').value;
   const plusValuePct = +document.getElementById('r_plusvalue').value;
   const fraisVentePct = +document.getElementById('r_fraisvente').value;
 
-  const coutTotal = prix * (1+fraisPct/100) + travaux;
+  const coutTotal = prix * (1+fraisPct/100) + travaux + fraisDossier;
   const emprunt = Math.max(coutTotal - apport, 0);
-  const mensualite = loanAnnuity(emprunt, taux, duree);
-  const annuite = mensualite * 12;
+  const mensualiteCredit = loanAnnuity(emprunt, taux, duree);
+  const assuranceAn = emprunt * assurancePct/100;
+  const annuiteTotal = mensualiteCredit*12 + assuranceAn;
 
-  const loyerAnnuelBrut = loyerM * 12 * (1 - vacancePct/100);
-  const gestionAn = loyerAnnuelBrut * gestionPct/100;
-  const chargesAn = chargesM * 12 + taxeAn + gestionAn;
+  const loyerBrutAnnuel = loyerM * 12;
+  const loyerApresVacance = loyerBrutAnnuel * (1 - vacancePct/100);
+  const provImpayes = loyerBrutAnnuel * impayesPct/100;
+  const loyerNetEncaisse = loyerApresVacance - provImpayes;
 
-  const cashflowAnnuel = loyerAnnuelBrut - chargesAn - annuite;
-  const rendementBrut = (loyerM*12) / coutTotal * 100;
-  const rendementNet = (loyerAnnuelBrut - chargesAn) / coutTotal * 100;
+  const gestionAn = loyerNetEncaisse * gestionPct/100;
+  const travauxProvAn = prix * travauxProvPct/100;
 
-  // Valeur de revente et solde du prêt à l'horizon
+  const totalFraisGestion = taxeAn + coproAn + pnoAn + gestionAn + comptaAn + banqueAn + cfeAn + greffeAn + travauxProvAn;
+
+  const cashflowAnnuel = loyerNetEncaisse - totalFraisGestion - annuiteTotal;
+  const rendementBrut = loyerBrutAnnuel / coutTotal * 100;
+  const rendementNet = (loyerNetEncaisse - totalFraisGestion) / coutTotal * 100;
+
   const valeurRevente = prix * Math.pow(1+plusValuePct/100, horizon);
   const produitVenteNet = valeurRevente * (1 - fraisVentePct/100);
   const moisEcoules = Math.min(horizon*12, duree*12);
   const soldeRestant = horizon >= duree ? 0 : remainingBalance(emprunt, taux, duree, moisEcoules);
   const produitFinal = produitVenteNet - soldeRestant;
 
-  // Flux pour TRI
   const flows = [-apport];
   for(let y=1; y<=horizon; y++){
-    if(y===horizon) flows.push(cashflowAnnuel + produitFinal);
-    else flows.push(cashflowAnnuel);
+    flows.push(y===horizon ? cashflowAnnuel + produitFinal : cashflowAnnuel);
   }
   const tri = irrNewtonRaphson(flows) * 100;
-
   const cfMensuel = cashflowAnnuel/12;
 
   const html = `
-    <div class="stat-row">
-      <span class="stat-label">Montant emprunté</span>
-      <span class="stat-value">${fmtEur(emprunt)}</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Mensualité de prêt</span>
-      <span class="stat-value">${fmtEur(mensualite,0)}</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Cash-flow mensuel</span>
-      <span class="stat-value ${cfMensuel>=0?'good':'bad'}">${cfMensuel>=0?'+':''}${fmtEur(cfMensuel,0)}</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Rendement brut</span>
-      <span class="stat-value">${fmt(rendementBrut,2)} %</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Rendement net de charges</span>
-      <span class="stat-value">${fmt(rendementNet,2)} %</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Valeur de revente estimée (an. ${horizon})</span>
-      <span class="stat-value">${fmtEur(valeurRevente)}</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">TRI sur l'horizon (${horizon} ans)</span>
-      <span class="stat-value big ${tri>=0?'good':'bad'}">${fmt(tri,2)} %</span>
-    </div>
+    <div class="stat-row"><span class="stat-label">Coût total du projet</span><span class="stat-value">${fmtEur(coutTotal)}</span></div>
+    <div class="stat-row"><span class="stat-label">Montant emprunté</span><span class="stat-value">${fmtEur(emprunt)}</span></div>
+    <div class="stat-row sub"><span class="stat-label">Mensualité crédit + assurance</span><span class="stat-value">${fmtEur(mensualiteCredit + assuranceAn/12,0)}</span></div>
+    <div class="stat-row"><span class="stat-label">Total frais de gestion annuels</span><span class="stat-value">${fmtEur(totalFraisGestion,0)}</span></div>
+    <div class="stat-row sub"><span class="stat-label">dont taxe foncière + copro + PNO</span><span class="stat-value">${fmtEur(taxeAn+coproAn+pnoAn,0)}</span></div>
+    <div class="stat-row sub"><span class="stat-label">dont comptable + CFE + banque + greffe</span><span class="stat-value">${fmtEur(comptaAn+cfeAn+banqueAn+greffeAn,0)}</span></div>
+    <div class="stat-row sub"><span class="stat-label">dont provision gros entretien</span><span class="stat-value">${fmtEur(travauxProvAn,0)}</span></div>
+    <div class="stat-row total"><span class="stat-label">Cash-flow mensuel net</span><span class="stat-value ${cfMensuel>=0?'good':'bad'}">${cfMensuel>=0?'+':''}${fmtEur(cfMensuel,0)}</span></div>
+    <div class="stat-row"><span class="stat-label">Rendement brut</span><span class="stat-value">${fmt(rendementBrut,2)} %</span></div>
+    <div class="stat-row"><span class="stat-label">Rendement net (tous frais)</span><span class="stat-value">${fmt(rendementNet,2)} %</span></div>
+    <div class="stat-row"><span class="stat-label">Valeur de revente estimée (an. ${horizon})</span><span class="stat-value">${fmtEur(valeurRevente)}</span></div>
+    <div class="stat-row total"><span class="stat-label">TRI sur l'horizon (${horizon} ans)</span><span class="stat-value big ${tri>=0?'good':'bad'}">${fmt(tri,2)} %</span></div>
   `;
   document.getElementById('r_results').innerHTML = html;
 }
-
-['r_prix','r_frais','r_travaux','r_apport','r_duree','r_taux','r_loyer','r_charges','r_taxe','r_vacance','r_gestion','r_horizon','r_plusvalue','r_fraisvente']
-  .forEach(id=>document.getElementById(id).addEventListener('input', computeRentabilite));
 
 // ================= PANEL 2 : COMPARATEUR =================
 function computeComparateur(){
@@ -644,39 +1027,42 @@ function computeComparateur(){
   const tmi = +document.getElementById('c_tmi').value;
   const horizon = +document.getElementById('c_horizon').value;
   const appreciationPct = +document.getElementById('c_appreciation').value;
+  const fraisSCI = +document.getElementById('c_fraisSCI').value;
+  const fraisSCPIPct = +document.getElementById('c_fraisSCPI').value;
 
   const loyerAnnuel = montant * rendementBrutPct/100;
   const chargesAn = loyerAnnuel * chargesPct/100;
-  const resultatAvantImpot = loyerAnnuel - chargesAn;
+  const resultatAvantImpotSCI = loyerAnnuel - chargesAn - fraisSCI;
+  const resultatAvantImpotDirect = loyerAnnuel - chargesAn;
   const prelevSociaux = 17.2;
 
-  // --- SCI IS : amortissement ~3%/an du montant, IS 15%/25%
-  const amortissementAn = montant * 0.85 * 0.033; // ~3.3%/an sur 85% valeur bâti
-  const resultatFiscalIS = Math.max(resultatAvantImpot - amortissementAn, 0);
-  const isDu = resultatFiscalIS <= 42500 ? resultatFiscalIS*0.15 : 42500*0.15 + (resultatFiscalIS-42500)*0.25;
-  const cashflowNetSCI = resultatAvantImpot - isDu;
+  const amortissementAn = montant * 0.85 * 0.033;
+  const resultatFiscalIS = Math.max(resultatAvantImpotSCI - amortissementAn, 0);
+  const isDu = isFor(resultatFiscalIS);
+  const cashflowNetSCI = resultatAvantImpotSCI - isDu;
   const cashflowNetSCITotal = cashflowNetSCI * horizon;
 
-  // --- Détention directe : foncier réel, TMI + PS sur résultat avant amortissement (pas d'amortissement en direct hors LMNP)
-  const impotDirect = resultatAvantImpot * (tmi + prelevSociaux)/100;
-  const cashflowNetDirect = resultatAvantImpot - impotDirect;
+  const impotDirect = resultatAvantImpotDirect * (tmi + prelevSociaux)/100;
+  const cashflowNetDirect = resultatAvantImpotDirect - impotDirect;
   const cashflowNetDirectTotal = cashflowNetDirect * horizon;
 
-  // --- SCPI : même fiscalité que direct mais pas d'effet de levier ni plus-value immo différée
-  const cashflowNetSCPI = cashflowNetDirect;
+  const montantSCPINet = montant * (1 - fraisSCPIPct/100);
+  const loyerSCPI = montantSCPINet * rendementBrutPct/100;
+  const resultatSCPI = loyerSCPI - (loyerSCPI*chargesPct/100*0.3); // frais gestion SCPI déjà dans le rendement affiché, charges résiduelles faibles
+  const impotSCPI = resultatSCPI * (tmi + prelevSociaux)/100;
+  const cashflowNetSCPI = resultatSCPI - impotSCPI;
   const cashflowNetSCPITotal = cashflowNetSCPI * horizon;
 
   const valeurFinale = montant * Math.pow(1+appreciationPct/100, horizon);
-  const plusValueBrute = valeurFinale - montant;
 
   const totalSCI = cashflowNetSCITotal + valeurFinale;
-  const totalDirect = cashflowNetDirectTotal + valeurFinale * 0.7; // plus-value directe fortement taxée si <22 ans
-  const totalSCPI = cashflowNetSCPITotal + montant; // capital SCPI non réévalué de la même façon (simplification)
+  const totalDirect = cashflowNetDirectTotal + valeurFinale * 0.75;
+  const totalSCPI = cashflowNetSCPITotal + montantSCPINet;
 
   const results = [
-    {name:'SCI à l\'IS', cf: cashflowNetSCI, total: totalSCI, impot: isDu, taux: (isDu/resultatAvantImpot*100)},
-    {name:'Détention directe', cf: cashflowNetDirect, total: totalDirect, impot: impotDirect, taux: (tmi+prelevSociaux)},
-    {name:'SCPI', cf: cashflowNetSCPI, total: totalSCPI, impot: impotDirect, taux: (tmi+prelevSociaux)}
+    {name:"SCI à l'IS", cf: cashflowNetSCI, total: totalSCI, impot: isDu, taux: resultatAvantImpotSCI>0 ? (isDu/resultatAvantImpotSCI*100) : 0, frais: fraisSCI},
+    {name:'Détention directe', cf: cashflowNetDirect, total: totalDirect, impot: impotDirect, taux: (tmi+prelevSociaux), frais: 0},
+    {name:'SCPI', cf: cashflowNetSCPI, total: totalSCPI, impot: impotSCPI, taux: (tmi+prelevSociaux), frais: montant*fraisSCPIPct/100}
   ];
   const maxTotal = Math.max(...results.map(r=>r.total));
 
@@ -685,7 +1071,8 @@ function computeComparateur(){
       ${results.map(r=>`
         <div class="compare-col ${r.total===maxTotal?'winner':''}">
           <h3>${r.name}</h3>
-          <div class="compare-line"><span>Cash-flow net annuel</span><b class="${r.cf>=0?'':'bad'}">${fmtEur(r.cf,0)}</b></div>
+          <div class="compare-line"><span>Cash-flow net annuel</span><b class="${r.cf>=0?'':''}">${fmtEur(r.cf,0)}</b></div>
+          <div class="compare-line"><span>Frais de structure/entrée</span><b>${fmtEur(r.frais,0)}</b></div>
           <div class="compare-line"><span>Impôt/prélèvements annuels</span><b>${fmtEur(r.impot,0)}</b></div>
           <div class="compare-line"><span>Taux effectif</span><b>${fmt(r.taux,1)} %</b></div>
           <div class="compare-line"><span>Patrimoine net à ${horizon} ans</span><b>${fmtEur(r.total,0)}</b></div>
@@ -695,9 +1082,6 @@ function computeComparateur(){
   `;
   document.getElementById('c_results').innerHTML = html;
 }
-
-['c_montant','c_loyer','c_charges','c_tmi','c_horizon','c_appreciation']
-  .forEach(id=>document.getElementById(id).addEventListener('input', computeComparateur));
 
 // ================= PANEL 3 : FISCALITE IS =================
 function computeFiscalite(){
@@ -716,52 +1100,26 @@ function computeFiscalite(){
   const resultatComptable = loyers - charges - interets;
   const resultatFiscal = Math.max(resultatComptable - amortTotal, 0);
 
-  const isDu = resultatFiscal <= 42500 ? resultatFiscal*0.15 : 42500*0.15 + (resultatFiscal-42500)*0.25;
+  const isDu = isFor(resultatFiscal);
   const tauxEffectif = resultatComptable>0 ? (isDu/resultatComptable*100) : 0;
   const cashflowApresIS = resultatComptable - isDu;
 
-  // nombre d'années avant que le résultat fiscal dépasse l'amortissement disponible (approx : tant que charges déductibles cumulées absorbent le résultat)
-  let anneesISFaible = 0;
-  for(let y=1; y<=dureeAmort; y++){
-    const rf = Math.max(resultatComptable - amortTotal, 0);
-    if(rf < resultatComptable*0.3) anneesISFaible = y; else break;
-  }
-
   const html = `
-    <div class="stat-row">
-      <span class="stat-label">Amortissement annuel total</span>
-      <span class="stat-value">${fmtEur(amortTotal,0)}</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Résultat comptable (avant amort.)</span>
-      <span class="stat-value">${fmtEur(resultatComptable,0)}</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Résultat fiscal (après amort.)</span>
-      <span class="stat-value">${fmtEur(resultatFiscal,0)}</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">IS dû</span>
-      <span class="stat-value ${isDu<resultatComptable*0.1?'good':''}">${fmtEur(isDu,0)}</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Taux d'IS effectif sur cash-flow réel</span>
-      <span class="stat-value">${fmt(tauxEffectif,1)} %</span>
-    </div>
-    <div class="stat-row">
-      <span class="stat-label">Cash-flow net d'IS</span>
-      <span class="stat-value big good">${fmtEur(cashflowApresIS,0)}</span>
-    </div>
+    <div class="stat-row"><span class="stat-label">Amortissement annuel total</span><span class="stat-value">${fmtEur(amortTotal,0)}</span></div>
+    <div class="stat-row"><span class="stat-label">Résultat comptable (avant amort.)</span><span class="stat-value">${fmtEur(resultatComptable,0)}</span></div>
+    <div class="stat-row"><span class="stat-label">Résultat fiscal (après amort.)</span><span class="stat-value">${fmtEur(resultatFiscal,0)}</span></div>
+    <div class="stat-row"><span class="stat-label">IS dû</span><span class="stat-value ${isDu<resultatComptable*0.1?'good':''}">${fmtEur(isDu,0)}</span></div>
+    <div class="stat-row"><span class="stat-label">Taux d'IS effectif sur cash-flow réel</span><span class="stat-value">${fmt(tauxEffectif,1)} %</span></div>
+    <div class="stat-row total"><span class="stat-label">Cash-flow net d'IS</span><span class="stat-value big good">${fmtEur(cashflowApresIS,0)}</span></div>
   `;
   document.getElementById('f_results').innerHTML = html;
 
-  // Bar chart : IS années 1, 5, 10, 15, 20
-  const years = [1,5,10,15,20].filter(y=>y<=dureeAmort+5);
+  const years = [1,5,10,15,20].filter(y=>y<=dureeAmort+10);
   let barHtml = '';
   years.forEach(y=>{
     const stillAmortizing = y <= dureeAmort;
     const rf = stillAmortizing ? Math.max(resultatComptable - amortTotal,0) : resultatComptable;
-    const is_y = rf <= 42500 ? rf*0.15 : 42500*0.15 + (rf-42500)*0.25;
+    const is_y = isFor(rf);
     const pct = resultatComptable>0 ? Math.min(is_y/resultatComptable*100, 100) : 0;
     barHtml += `
       <div class="bar-row">
@@ -771,16 +1129,127 @@ function computeFiscalite(){
       </div>
     `;
   });
-  document.getElementById('f_barchart').innerHTML = `<div class="section-divider">IS dû dans le temps</div>` + barHtml;
+  document.getElementById('f_barchart').innerHTML = barHtml;
 }
 
-['f_valeur','f_dureeamort','f_mobilier','f_dureemobilier','f_loyers','f_charges','f_interets']
-  .forEach(id=>document.getElementById(id).addEventListener('input', computeFiscalite));
+// ================= PANEL 4 : TRESORERIE =================
+function computeTresorerie(){
+  const emprunt = +document.getElementById('t_emprunt').value;
+  const taux = +document.getElementById('t_taux').value;
+  const duree = +document.getElementById('t_duree').value;
+  const loyers1 = +document.getElementById('t_loyers').value;
+  const indexLoyer = +document.getElementById('t_indexation').value;
+  const charges1 = +document.getElementById('t_charges').value;
+  const indexCharges = +document.getElementById('t_chargesindex').value;
+  const valeurAmort = +document.getElementById('t_valeuramort').value;
+  const dureeAmort = +document.getElementById('t_dureeamort').value;
+  const horizon = +document.getElementById('t_horizon').value;
 
-// Initial compute
-computeRentabilite();
-computeComparateur();
-computeFiscalite();
+  const amortAn = valeurAmort / dureeAmort;
+
+  let rows = [];
+  let cumulTreso = 0;
+  let totalIS = 0;
+  let premiereAnneeISsignif = null;
+
+  for(let y=1; y<=horizon; y++){
+    const loyerY = loyers1 * Math.pow(1+indexLoyer/100, y-1);
+    const chargesY = charges1 * Math.pow(1+indexCharges/100, y-1);
+    const {interest, principalPaid, annuite} = interestPaidInYear(emprunt, taux, duree, y);
+    const resultatComptable = loyerY - chargesY - interest;
+    const amortY = y <= dureeAmort ? amortAn : 0;
+    const resultatFiscal = Math.max(resultatComptable - amortY, 0);
+    const isDu = isFor(resultatFiscal);
+    totalIS += isDu;
+    const tresoDispo = loyerY - chargesY - annuite - isDu;
+    cumulTreso += tresoDispo;
+
+    if(premiereAnneeISsignif===null && resultatComptable>0 && isDu > resultatComptable*0.15){
+      premiereAnneeISsignif = y;
+    }
+
+    rows.push({y, loyerY, chargesY, annuite, interest, principalPaid, isDu, tresoDispo, cumulTreso});
+  }
+
+  const moyenneTreso = rows.reduce((s,r)=>s+r.tresoDispo,0)/rows.length;
+  const derniereAnnee = rows[rows.length-1];
+
+  const summaryHtml = `
+    <div class="stat-row"><span class="stat-label">Trésorerie disponible moyenne / an</span><span class="stat-value big ${moyenneTreso>=0?'good':'bad'}">${fmtEur(moyenneTreso,0)}</span></div>
+    <div class="stat-row"><span class="stat-label">Total IS cumulé sur ${horizon} ans</span><span class="stat-value">${fmtEur(totalIS,0)}</span></div>
+    <div class="stat-row"><span class="stat-label">Trésorerie cumulée à l'année ${horizon}</span><span class="stat-value good">${fmtEur(derniereAnnee.cumulTreso,0)}</span></div>
+    <div class="stat-row"><span class="stat-label">${premiereAnneeISsignif ? "Première année d'IS significatif (>15% du résultat)" : "IS reste faible sur toute la période affichée"}</span><span class="stat-value">${premiereAnneeISsignif ? 'Année '+premiereAnneeISsignif : '—'}</span></div>
+  `;
+  document.getElementById('t_summary').innerHTML = summaryHtml;
+
+  let thead = `<thead><tr><th>Année</th><th>Loyers</th><th>Charges gestion</th><th>Mensualité prêt</th><th>IS dû</th><th>Trésorerie dispo.</th><th>Trésorerie cumulée</th></tr></thead>`;
+  let tbody = '<tbody>';
+  rows.forEach(r=>{
+    const milestone = (r.y % 5 === 0) ? ' milestone' : '';
+    tbody += `<tr class="${milestone.trim()}">
+      <td>An ${r.y}</td>
+      <td>${fmtEur(r.loyerY,0)}</td>
+      <td class="neg">−${fmtEur(r.chargesY,0)}</td>
+      <td class="neg">−${fmtEur(r.annuite,0)}</td>
+      <td class="neg">−${fmtEur(r.isDu,0)}</td>
+      <td class="${r.tresoDispo>=0?'pos':'neg'}">${r.tresoDispo>=0?'+':''}${fmtEur(r.tresoDispo,0)}</td>
+      <td class="${r.cumulTreso>=0?'pos':'neg'}">${fmtEur(r.cumulTreso,0)}</td>
+    </tr>`;
+  });
+  tbody += '</tbody>';
+  document.getElementById('t_table').innerHTML = thead + tbody;
+
+  window._tresoRows = rows; // for CSV export
+}
+
+// ================= EXPORT =================
+function exportSummary(prefix){
+  const resultsEl = document.getElementById(prefix + (prefix==='t' ? '_summary' : '_results'));
+  if(!resultsEl) return;
+  const lines = [];
+  lines.push('=== Outils SCI IS — Résumé export ===');
+  lines.push('Généré depuis: ' + window.location.href);
+  lines.push('Date: ' + new Date().toLocaleString('fr-FR'));
+  lines.push('');
+  resultsEl.querySelectorAll('.stat-row').forEach(row=>{
+    const label = row.querySelector('.stat-label')?.innerText.trim() || '';
+    const value = row.querySelector('.stat-value')?.innerText.trim() || '';
+    lines.push(label + ' : ' + value);
+  });
+  const blob = new Blob([lines.join('\n')], {type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sci-outils-' + prefix + '-' + Date.now() + '.txt';
+  a.click();
+}
+
+function exportTableCSV(){
+  const rows = window._tresoRows;
+  if(!rows) return;
+  let csv = 'Année;Loyers;Charges gestion;Mensualité prêt;IS dû;Trésorerie disponible;Trésorerie cumulée\n';
+  rows.forEach(r=>{
+    csv += [r.y, Math.round(r.loyerY), Math.round(r.chargesY), Math.round(r.annuite), Math.round(r.isDu), Math.round(r.tresoDispo), Math.round(r.cumulTreso)].join(';') + '\n';
+  });
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sci-outils-tresorerie-' + Date.now() + '.csv';
+  a.click();
+}
+
+// ================= WIRE UP =================
+function computeAll(){
+  computeRentabilite();
+  computeComparateur();
+  computeFiscalite();
+  computeTresorerie();
+}
+
+document.querySelectorAll('input[type=number], select').forEach(el=>{
+  el.addEventListener('input', computeAll);
+});
+
+computeAll();
 </script>
 </body>
 </html>
